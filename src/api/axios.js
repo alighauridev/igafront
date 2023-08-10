@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 const save = async (key, value) => {
   //save in local storage
   localStorage.setItem(key, value);
@@ -11,9 +10,8 @@ const get = async (key) => {
   return localStorage.getItem(key);
 };
 
-
-// export const baseURL = "http://localhost:5000";
-export const baseURL = "https://igap-git-main-suleman12723.vercel.app";
+export const baseURL = "http://localhost:5000";
+//export const baseURL = "https://igap-git-main-suleman12723.vercel.app";
 
 const instance = axios.create({
   baseURL: baseURL,

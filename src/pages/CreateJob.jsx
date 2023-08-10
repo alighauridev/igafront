@@ -8,14 +8,32 @@ import { createJob } from "../redux/slices/job/jobActions";
 import axios from "../api/axios";
 
 function CreateJob() {
+  const [budget, setBudget] = useState(0);
+  const [days, setDays] = useState(0);
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
   const [subCategories, setSubCategories] = useState([]);
   const categories = useSelector((state) => state.category);
+  const [allJobs, setAllJobs] = useState([]);
   const { loading, jobs, error } = useSelector((state) => state.jobs);
   const dispatch = useDispatch();
 
+  async function getAllJobs() {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+    };
+    const res = await axios.get(`/jobs`, config);
+    const titles = res.data.data.jobs.map((job) => {
+      return { title: job.title };
+    });
+    setAllJobs(titles);
+  }
+
   useEffect(() => {
+    getAllJobs();
     dispatch(getCategory({}));
   }, [dispatch]);
 
@@ -32,18 +50,28 @@ function CreateJob() {
   const handleFileClick = () => {
     fileRef.current.click();
   };
-
+  function alreadyExists(title) {
+    const exists = allJobs.filter((name) => name === title);
+    if (exists.length > 0) {
+      return true;
+    }
+    return false;
+  }
   const submitForm = async (e) => {
     e.preventDefault();
     const data = {
       title: e.target.title.value,
       description: e.target.description.value,
-      requestedBudget: e.target.requestedBudget.value,
-      requestedDays: e.target.requestedDays.value,
+      requestedBudget: budget,
+      requestedDays: days,
       files: e.target.files.files,
       category: e.target.category.value,
       subCategory: e.target.subCategory.value,
     };
+    if (alreadyExists(data.title)) {
+      return;
+    }
+
     console.log(data);
     //checking if some files were selcted or not if yes then upload them then get the data and set it with data for job creation
     if (data.files && data.files.length > 0) {
@@ -77,8 +105,10 @@ function CreateJob() {
         //remove dATA FROM FORM
         e.target.title.value = "";
         e.target.description.value = "";
-        e.target.requestedBudget.value = "";
-        e.target.requestedDays.value = "";
+        //e.target.requestedBudget.value = "";
+        //e.target.requestedDays.value = "";
+        setBudget(0);
+        setDays(0);
         e.target.category.value = "";
         e.target.subCategory.value = "";
         setCategory("");
@@ -99,33 +129,54 @@ function CreateJob() {
           Fill in the form below to get your job posted
         </p>
         <form onSubmit={submitForm} className="flex flex-col space-y-5">
-          <input
-            type="text"
-            placeholder="Job Title"
-            className="border border-border rounded-md p-2"
-            name="title"
-            required
-          />
-          <textarea
-            placeholder="Job Description"
-            className="border border-border rounded-md p-2 max-h-[150px] min-h-[150px]"
-            name="description"
-            required
-          />
-          <input
-            type="number"
-            placeholder="Budget"
-            className="border border-border rounded-md p-2"
-            name="requestedBudget"
-            required
-          />
-          <input
-            type="number"
-            placeholder="Days"
-            className="border border-border rounded-md p-2"
-            name="requestedDays"
-            required
-          />
+          <div className="flex flex-col">
+            <label>Job Title</label>
+            <input
+              type="text"
+              className="border border-border rounded-md p-2"
+              name="title"
+              required
+            />
+          </div>
+          <div className="flex flex-col">
+            <label>Job Description</label>
+
+            <textarea
+              className="border border-border rounded-md p-2 max-h-[150px] min-h-[150px]"
+              name="description"
+              required
+            />
+          </div>
+          <div className="flex flex-col group">
+            <label>Budget</label>
+            <div className="border border-border rounded-md p-2 flex space-x-3">
+              <p className="text-gray-600 font-medium">AED $</p>
+              <input
+                type="number"
+                value={budget}
+                onChange={(e) =>
+                  e.target.value < 0 ? setBudget(0) : setBudget(e.target.value)
+                }
+                className="focus:outline-none focus:border-none flex-1"
+                name="requestedBudget"
+                required
+              />
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <label>Timeframe (in days)</label>{" "}
+            <input
+              type="number"
+              placeholder="Days"
+              value={days}
+              onChange={(e) =>
+                e.target.value < 0 ? setDays(0) : setDays(e.target.value)
+              }
+              className="border border-border rounded-md p-2"
+              name="requestedDays"
+              required
+            />
+          </div>
           <select
             className="border border-border rounded-md p-2"
             required

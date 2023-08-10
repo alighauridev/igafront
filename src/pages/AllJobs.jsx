@@ -22,6 +22,7 @@ function AllJobs() {
   const [name, setName] = useState(null);
 
   //=========== Fetching Jobs INitially =================
+
   useEffect(() => {
     if (jobs.length === 0) {
       dispatch(getJobs({}));
@@ -39,18 +40,15 @@ function AllJobs() {
     }
   };
 
-
   const handleRemoveFilter = () => {
     try {
       setCategory(null);
       setSubCategory(null);
       setName(null);
-      
     } catch (err) {
       toast.error(err);
     }
   };
-  
 
   const displayJobs = getFilteredJobs(jobs, {
     category,
@@ -59,13 +57,10 @@ function AllJobs() {
   });
 
   useEffect(() => {
-
-    if(displayJobs.length < 10 && hasNextPage && !loading){
-      dispatch(getJobs({cursor: jobs[jobs.length - 1]._id}));
+    if (displayJobs.length < 10 && hasNextPage && !loading) {
+      dispatch(getJobs({ cursor: jobs[jobs.length - 1]._id }));
     }
-
   }, [displayJobs]);
-
 
   // =========== handles Paginatio n=================
   const loadMore = () => {
@@ -81,14 +76,12 @@ function AllJobs() {
     }
   };
 
-
-// =========== handles View Job ==================
+  // =========== handles View Job ==================
   const handleView = (id) => {
     navigate(`/job/${id}`);
   };
 
   //=======================================
-
 
   return (
     <div className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden bg-tertiary">
@@ -97,8 +90,12 @@ function AllJobs() {
         <HeroSection />
       </div> */}
       <div className="py-7 px-5">
-        <JobFilterBar handleFilter={handleFilter} handleRemoveFilter={handleRemoveFilter}/>
+        <JobFilterBar
+          handleFilter={handleFilter}
+          handleRemoveFilter={handleRemoveFilter}
+        />
       </div>
+      <div>Hello world</div>
       <div className="grid grid-flow-row grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 p-5 pb-16">
         {displayJobs.map((job) => (
           <JobCard onView={handleView} {...job} />

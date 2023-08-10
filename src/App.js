@@ -21,6 +21,12 @@ import MyBids from "./pages/MyBids";
 import Dashboard from "./pages/Dashboard";
 import Category from "./pages/Category";
 
+import OrdersPage from "./pages/BusinessTab/Orders";
+import ServicesPage from "./pages/BusinessTab/Services";
+import EarningsPage from "./pages/BusinessTab/Earnings";
+import AddNewServicePage from "./pages/BusinessTab/AddNewService";
+import FreelancerServicePage from "./pages/BusinessTab/FreelancerService";
+import BuyerServiceViewPage from "./pages/BuyerServiceView";
 
 function App() {
   const location = useLocation();
@@ -28,15 +34,12 @@ function App() {
 
   //to get usrer credentials after each refresh
   React.useEffect(() => {
-
     const loggedInUser = localStorage.getItem("user");
     if (loggedInUser) {
       const foundUser = JSON.parse(loggedInUser);
-      dispatch(setCredentials({data:foundUser}))
+      dispatch(setCredentials({ data: foundUser }));
     }
-
   }, []);
-
 
   return (
     <div className="flex overflow-hidden w-full h-full bg-primary">
@@ -44,7 +47,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-          <Route path="/onboarding" element={<OnBoarding />} />
+        <Route path="/onboarding" element={<OnBoarding />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/Jobs" element={<AllJobs />} />
           <Route path="/Job/:id" element={<Job />} />
@@ -55,16 +58,26 @@ function App() {
           <Route path="/SellerProfile/:id" element={<SellerProfile />} />
           <Route path="/CreateJob" element={<CreateJob />} />
           <Route path="/Job/:id/Bids" element={<Bids />} />
+          <Route
+            path="/sellerprofile/services/:id"
+            element={<BuyerServiceViewPage />}
+          />
         </Route>
         <Route element={<ProtectedRoute type="Freelancer" />}>
           <Route path="/MyJobs" element={<Jobs />} />
           <Route path="/MyBids" element={<MyBids />} />
-          
+          <Route path="/business/orders" element={<OrdersPage />} />
+          <Route path="/business/earnings" element={<EarningsPage />} />
+          <Route path="/business/services" element={<ServicesPage />} />
+          <Route path="/add-service" element={<AddNewServicePage />} />
+          <Route
+            path="/freelancer/services/:id"
+            element={<FreelancerServicePage />}
+          />
         </Route>
         <Route element={<ProtectedRoute type="Admin" />}>
           <Route path="/Dashboard" element={<Dashboard />} />
           <Route path="/Categories" element={<Category />} />
-          
         </Route>
         <Route path="*" element={<h1>Not Found</h1>} />
       </Routes>

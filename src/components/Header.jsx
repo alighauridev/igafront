@@ -13,8 +13,9 @@ function Header() {
   const [linksMenu, setLinksMenu] = React.useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading, userInfo, error } = useSelector((state) => state.auth);
+  const [showMyBusinessMenu, setShowMBMenu] = React.useState(false);
 
+  const { loading, userInfo, error } = useSelector((state) => state.auth);
 
   return (
     <nav className="flex justify-between p-3 flex-col space-y-4 md:flex-row md:space-y-0 border-b border-[#D5D5D5]">
@@ -30,23 +31,75 @@ function Header() {
         </div>
 
         {/* Links Section */}
-        <div className="block md:hidden relative" onClick={()=>setLinksMenu(!linksMenu)}>
+        <div
+          className="block md:hidden relative"
+          onClick={() => setLinksMenu(!linksMenu)}
+        >
           <Menu />
-        {linksMenu && <div className={`w-[100px] absolute top-full right-2 flex flex-col bg-primary text-black font-text text-text shadow-md `}>
-          {userInfo.role==="Admin" && <Link to="/Dashboard">Dashboard</Link>}
-          {userInfo.role==="Admin" && <Link to="/Categories">Categories</Link>}
-          {(userInfo.role==="Buyer" || userInfo?.role==="Admin") && <Link to="/Freelancers">Find Talent</Link>}
-          {(userInfo.role==="Buyer" ) && <Link to="/Jobs">My Jobs</Link>}
-          {(userInfo.role==="Freelancer" || userInfo?.role==="Admin") && <Link to="/Jobs">Jobs</Link>}
-          <Link to="/aboutus">About Us</Link>
-        </div>}
+          {linksMenu && (
+            <div
+              className={`w-[100px] absolute top-full right-2 flex flex-col bg-primary text-black font-text text-text shadow-md `}
+            >
+              {userInfo.role === "Admin" && (
+                <Link to="/Dashboard">Dashboard</Link>
+              )}
+              {userInfo.role === "Admin" && (
+                <Link to="/Categories">Categories</Link>
+              )}
+              {(userInfo.role === "Buyer" || userInfo?.role === "Admin") && (
+                <Link to="/Freelancers">Find Talent</Link>
+              )}
+              {userInfo.role === "Buyer" && <Link to="/Jobs">My Jobs</Link>}
+
+              {(userInfo.role === "Freelancer" ||
+                userInfo?.role === "Admin") && <Link to="/Jobs">Jobs</Link>}
+              <Link to="/aboutus">About Us</Link>
+            </div>
+          )}
         </div>
         <div className="flex-1 hidden md:flex justify-center items-center space-x-6 font-heading text-base">
-          {userInfo.role==="Admin" && <Link to="/Dashboard">Dashboard</Link>}
-          {userInfo.role==="Admin" && <Link to="/Categories">Categories</Link>}
-          {(userInfo.role==="Buyer" || userInfo?.role==="Admin") && <Link to="/Freelancers">Find Talent</Link>}
-          {(userInfo.role==="Buyer" ) && <Link to="/Jobs">My Jobs</Link>}
-          {(userInfo.role==="Freelancer" || userInfo?.role==="Admin") && <Link to="/Jobs">Jobs</Link>}
+          {userInfo.role === "Admin" && <Link to="/Dashboard">Dashboard</Link>}
+          {userInfo.role === "Admin" && (
+            <Link to="/Categories">Categories</Link>
+          )}
+          {(userInfo.role === "Buyer" || userInfo?.role === "Admin") && (
+            <Link to="/Freelancers">Find Talent</Link>
+          )}
+          {userInfo.role === "Buyer" && <Link to="/Jobs">My Jobs</Link>}
+
+          {(userInfo.role === "Freelancer" || userInfo?.role === "Admin") && (
+            <Link to="/Jobs">Jobs</Link>
+          )}
+          {userInfo.role === "Freelancer" && (
+            <div
+              onMouseEnter={() => setShowMBMenu(true)}
+              onMouseLeave={() => setShowMBMenu(false)}
+            >
+              <div className="relative">My Business</div>
+              {showMyBusinessMenu && (
+                <div className="absolute flex flex-col bg-white space-y-2">
+                  <Link
+                    className="text-center p-2 border-b border-gray-400 px-6 hover:bg-gray-50"
+                    to="/business/orders"
+                  >
+                    Orders
+                  </Link>
+                  <Link
+                    className="text-center p-2 border-b border-gray-400 px-6 hover:bg-gray-50"
+                    to="/business/services"
+                  >
+                    Services
+                  </Link>
+                  <Link
+                    className="text-center p-2 px-6 hover:bg-gray-50"
+                    to="/business/earnings"
+                  >
+                    Earnings
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
           <Link to="/aboutus">About Us</Link>
         </div>
 
@@ -57,7 +110,7 @@ function Header() {
       </div>
 
       {/* Right Side */}
-      { userInfo?._id === undefined ? (
+      {userInfo?._id === undefined ? (
         <div className="flex flex-1 justify-start md:justify-center space-x-6">
           <Button
             text={"login"}
@@ -76,7 +129,6 @@ function Header() {
             text={"Sign Up"}
             style={{ paddingLeft: 30, paddingRight: 30, borderRadius: 30 }}
             onClick={() => navigate("/register")}
-
           />
         </div>
       ) : (
@@ -88,29 +140,59 @@ function Header() {
             <Menu />
             {menu && (
               <div className="w-[100px] absolute top-full flex flex-col bg-primary text-black font-text text-text shadow-md">
-                {userInfo.role==="Freelancer" && <Link className="text-center p-2 " to="/mybids">
-                  My Bids
-                </Link>}
-                {userInfo.role ==="Freelancer" &&  <Link className="text-center p-2 " to="/myjobs">
-                  My Jobs
-                </Link>}
-                {userInfo.role ==="Buyer" &&  <Link className="text-center p-2 " to="/createjob">
-                  Create Job
-                </Link>}
-                {userInfo?._id !== undefined && <p className="text-center p-2 " onClick={()=>dispatch(logout())}>Logout</p>}
+                {userInfo.role === "Freelancer" && (
+                  <Link className="text-center p-2 " to="/mybids">
+                    My Bids
+                  </Link>
+                )}
+                {userInfo.role === "Freelancer" && (
+                  <Link className="text-center p-2 " to="/myjobs">
+                    My Jobs
+                  </Link>
+                )}
+
+                {userInfo.role === "Buyer" && (
+                  <Link
+                    className="text-center p-2 hover:bg-gray-100"
+                    to="/createjob"
+                  >
+                    Create Job
+                  </Link>
+                )}
+                {userInfo?._id !== undefined && (
+                  <p
+                    className="text-center p-2 cursor-pointer hover:bg-gray-100"
+                    onClick={() => dispatch(logout())}
+                  >
+                    Logout
+                  </p>
+                )}
               </div>
             )}
           </div>
+
           <div
             onClick={() => navigate("/Profile")}
             className="flex rounded-full w-12 h-12 border object-contain"
           >
             <img
               className="w-12 h-12 rounded-full"
-              src={userInfo?.avatar ? `${baseURL}/upload/image/${userInfo.avatar}` : require("../images/placeholder.png")}
+              src={
+                userInfo?.avatar
+                  ? `${baseURL}/upload/image/${userInfo.avatar}`
+                  : require("../images/placeholder.png")
+              }
               alt="profile"
             />
           </div>
+          {userInfo.role === "Buyer" && (
+            <Link
+              className="text-center px-4 py-2 bg-blue-500 rounded text-white ring-blue-500 ring-offset-2"
+              to="/createjob"
+            >
+              Post a Job
+            </Link>
+          )}
         </div>
       )}
     </nav>

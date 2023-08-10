@@ -51,7 +51,7 @@ export const createJob = createAsyncThunk(
 
 export const getJobs = createAsyncThunk(
   "job/getJobs",
-  async ({limit=10,cursor=null}, { rejectWithValue }) => {
+  async ({ limit = 10, cursor = null }, { rejectWithValue }) => {
     try {
       // let queryString = "";
 
@@ -72,7 +72,12 @@ export const getJobs = createAsyncThunk(
         },
       };
 
-      const res = await axios.get(`/jobs?'${limit&&'limit='+limit}${cursor ? '&cursor='+cursor : ''}`, config);
+      const res = await axios.get(
+        `/jobs?'${limit && "limit=" + limit}${
+          cursor ? "&cursor=" + cursor : ""
+        }`,
+        config
+      );
       return res.data.data;
     } catch (err) {
       let error = errorHandler(err);
@@ -193,5 +198,3 @@ export const updateJob = createAsyncThunk(
     }
   }
 );
-
-
